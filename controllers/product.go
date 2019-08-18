@@ -4,8 +4,10 @@ import (
 	"api/database"
 	"api/models"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 type Product models.Product
@@ -13,14 +15,16 @@ type Product models.Product
 func (p *Product) GetAllProduct(w http.ResponseWriter, r *http.Request) {
 	var collection database.Collection
 	products := collection.GetCollection(database.COLLECTION_PRODUCT)
-	json.NewEncoder(w).Encode(products)
+	var listPro []Product
+	err := products.Find(bson.M{}).All(&listPro)
+	if err != nil {
+		log.Fatal(err)
+	}
+	json.NewEncoder(w).Encode(listPro)
 }
 func (p *Product) InsertProduct(w http.ResponseWriter, r *http.Request) {
 	var collection database.Collection
 	products := collection.GetCollection(database.COLLECTION_PRODUCT)
-	fmt.Println(r.Body)
-	fmt.Println(json.NewDecoder(r.Body).Decode(p))
-	fmt.Println(p)
 	products.Insert(Product{
 		Name:  p.Name,
 		Price: p.Price,
