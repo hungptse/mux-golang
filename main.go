@@ -21,6 +21,8 @@ func main() {
 	route.HandleFunc("/", requestHandler)
 	route.HandleFunc("/product", productController.GetAllProduct)
 	route.HandleFunc("/insert", productController.InsertProduct)
+	route.HandleFunc("/get", productController.GetProductById)
+	route.HandleFunc("/get/{id}", productController.GetProductById)
 	if err := http.ListenAndServe(":1111", nil); err != nil {
 		panic(err)
 	}
